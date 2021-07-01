@@ -1,0 +1,17 @@
+depth_normphys_correction <- function(input){
+  input$new_depth <- seq(1, nrow(input), by=1)
+  for (i in 1:nrow(input)) {
+    dataset_min <- input[i, 2]
+    dataset_max <- input[i, 3]
+    ss1 <- subset(ctd_u, Datasets > dataset_min)
+    ss2 <- subset(ss1, Datasets < dataset_max)
+    cond <- mean(ss2$Cond_norm)
+    temp <- mean(ss2$Temp_norm)
+    dep <- mean(ss2$depth_norm)
+    pos_down <- which.min(abs(
+      abs((ctd_d$Cond_norm-cond))+
+        abs((ctd_d$depth_norm-dep))+abs((ctd_d$Temp_norm-temp))))
+    input[i, 5] <- ctd_d[pos_down,2]
+  }
+  print(input)
+}
